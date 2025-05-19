@@ -1,0 +1,104 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mystery Bonus Wheel</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background-color: black;
+      color: white;
+      text-align: center;
+      padding: 20px;
+    }
+    #logo {
+      max-width: 300px;
+    }
+    #wheel {
+      margin: 30px auto;
+      width: 300px;
+      height: 300px;
+      border: 10px solid orange;
+      border-radius: 50%;
+      position: relative;
+      overflow: hidden;
+    }
+    .segment {
+      position: absolute;
+      width: 50%;
+      height: 50%;
+      transform-origin: 100% 100%;
+      background: orange;
+      color: black;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 18px;
+    }
+    #spinBtn {
+      margin-top: 20px;
+      padding: 10px 20px;
+      background-color: orange;
+      color: black;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    #result {
+      font-size: 24px;
+      margin-top: 30px;
+    }
+  </style>
+</head>
+<body>
+  <img id="logo" src="logo.jpg" alt="June Gameing Logo">
+  <h1>Spin the Mystery Bonus Wheel!</h1>
+  <div id="wheel"></div>
+  <button id="spinBtn">SPIN</button>
+  <div id="result"></div>
+
+  <script>
+    const bonuses = ["10%", "20%", "30%", "40%", "50%", "70%", "100%"]; 
+    const wheel = document.getElementById("wheel");
+
+    bonuses.forEach((bonus, i) => {
+      const segment = document.createElement("div");
+      segment.className = "segment";
+      segment.style.transform = `rotate(${i * (360 / bonuses.length)}deg) skewY(-${90 - (360 / bonuses.length)}deg)`;
+      segment.style.background = i % 2 === 0 ? "orange" : "#ff9933";
+      segment.innerHTML = bonus;
+      wheel.appendChild(segment);
+    });
+
+    const result = document.getElementById("result");
+    const spinBtn = document.getElementById("spinBtn");
+
+    let hasSpun = localStorage.getItem("hasSpun");
+    if (hasSpun) {
+      spinBtn.disabled = true;
+      result.textContent = `You already spun and got: ${localStorage.getItem("bonusResult")}`;
+    }
+
+    spinBtn.onclick = () => {
+      if (hasSpun) return;
+      const spinDegrees = 360 * 5 + Math.floor(Math.random() * 360);
+      wheel.style.transition = "transform 4s ease-out";
+      wheel.style.transform = `rotate(${spinDegrees}deg)`;
+
+      const bonusIndex = Math.floor(((spinDegrees % 360) / 360) * bonuses.length);
+      const selectedBonus = bonuses[bonuses.length - 1 - bonusIndex];
+
+      setTimeout(() => {
+        result.textContent = `You won a ${selectedBonus} bonus!`;
+        localStorage.setItem("hasSpun", true);
+        localStorage.setItem("bonusResult", selectedBonus);
+        spinBtn.disabled = true;
+      }, 4200);
+    };
+  </script>
+</body>
+</html>
