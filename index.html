@@ -78,11 +78,11 @@
     const spinBtn = document.getElementById("spinBtn");
     const result = document.getElementById("result");
 
-    const bonuses = ["5$ FREE SPIN", "20$ FREE SPIN%", "30% BONUS", "40% BONUS", "50% BONUS", "10$ FREE SPIN", "100%"];
+    const bonuses = ["5$ FREE SPIN", "20$ FREE SPIN", "30% BONUS", "40% BONUS", "50% BONUS", "10$ FREE SPIN", "100% BONUS"];
     const colors = ["#FFA500", "#FFB84D"];
     const total = bonuses.length;
     let spinning = false;
-    let hasSpun = localStorage.getItem("hasSpun");
+    let hasSpun = localStorage.getItem("hasSpun") === "true";
 
     const drawWheel = () => {
       const arc = (2 * Math.PI) / total;
@@ -94,13 +94,15 @@
         ctx.arc(150, 150, 150, angle, angle + arc);
         ctx.fill();
 
-        // Text
+        // Draw text
         ctx.save();
         ctx.translate(150, 150);
         ctx.rotate(angle + arc / 2);
         ctx.fillStyle = "#000";
-        ctx.font = "bold 16px sans-serif";
-        ctx.fillText(bonuses[i], 80, 5);
+        ctx.font = "bold 14px sans-serif";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText(bonuses[i], 100, 0);
         ctx.restore();
       }
     };
@@ -126,12 +128,12 @@
 
       const finalDeg = randomDeg % 360;
       const arcSize = 360 / total;
-      const index = Math.floor((360 - finalDeg + arcSize / 2) % 360 / arcSize);
+      const index = Math.round((360 - finalDeg) % 360 / arcSize) % total;
       const selected = bonuses[index];
 
       setTimeout(() => {
         result.textContent = `You won a ${selected} bonus!`;
-        localStorage.setItem("hasSpun", true);
+        localStorage.setItem("hasSpun", "true");
         localStorage.setItem("bonusResult", selected);
         spinBtn.disabled = true;
         spinning = false;
@@ -140,4 +142,5 @@
   </script>
 </body>
 </html>
+
 
